@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "655163237641",
+    "project_id": "neatnotes",
+    "storage_bucket": "neatnotes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:655163237641:android:e0fe3b9bb917a1e1e09fd8",
+        "android_client_info": {
+          "package_name": "com.neatnotes.neatnotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZV_epErs0HNXcwEd4-dWSvT48NH7y3hs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
