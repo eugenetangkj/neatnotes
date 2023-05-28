@@ -6,17 +6,31 @@ import 'package:neatnotes/services/auth/bloc/auth_bloc.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
 import 'package:neatnotes/services/auth/bloc/auth_state.dart';
 import 'package:neatnotes/utilities/dialogs/error_dialog.dart';
-import 'package:neatnotes/utilities/dialogs/verification_email_sent.dart';
+import 'package:neatnotes/utilities/dialogs/recovery_email_sent.dart';
 
 
-class VerifyEmailView extends StatefulWidget {
-  const VerifyEmailView({Key? key}) : super(key: key);
+class ForgotPasswordView extends StatefulWidget {
+  const ForgotPasswordView({Key? key}) : super(key: key);
 
   @override
-  State<VerifyEmailView> createState() => _VerifyEmailViewState();
+  State<ForgotPasswordView> createState() => _ForgotPasswordViewState();
 }
 
-class _VerifyEmailViewState extends State<VerifyEmailView> {
+class _ForgotPasswordViewState extends State<ForgotPasswordView> {
+  late final TextEditingController _email;
+
+  @override
+  void initState() {
+    _email = TextEditingController();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _email.dispose();
+    super.dispose();
+  }
 
 
   //Builds back button
@@ -32,8 +46,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                     ?.unfocus();
                 await Future.delayed(const Duration(
                     milliseconds: 200));
-                //Log the user out and navigate to login screen to login again
-                //after email verification
+                //Navigate to login screen
                 context.read<AuthBloc>().add(const AuthEventLogout());
               },
               style: ButtonStyle(
@@ -59,14 +72,14 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
     
   }
 
-  //Builds verify email title
-  Widget buildVerifyEmailTitle() {
+  //Builds forgot password title
+  Widget buildForgotPasswordTitle() {
     return const Align(
       alignment: Alignment.center,
       child: Padding(
         padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
         child: Text(
-          'Verify Email',
+          'Forgot Password?',
           style: TextStyle(fontFamily: 'Roboto',
             fontWeight: FontWeight.w700,
             fontSize: 28,
@@ -76,57 +89,73 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
     );
   }
 
-  //Builds verify email content
-  Widget buildVerifyEmailContent() {
-    return const Align(
-      alignment: Alignment.center,
-      child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(30, 20, 30, 20),
-        child: Text(
-          'We have sent you a verification email. Please verify your account, then log back in again.',
-          style: TextStyle(fontFamily: 'Roboto',
-            fontWeight: FontWeight.w400,
-            fontSize: 18,
-            height: 1.5,
-          ),
-        ),
-      ),
-    );
-  }
-
-
-  //Builds did not receive message
-  Widget buildDidNotReceiveMessage() {
-    return const Align(
-      alignment: Alignment.center,
-      child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(30, 20, 30, 20),
-        child: Text(
-          'Did not receive?',
-          style: TextStyle(fontFamily: 'Roboto',
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
-            height: 1.5,
-            color: lightGrayColour,
-          ),
-        ),
-      ),
-    );
-  }
-
-
- 
-  //Builds send email verification button
-  Widget buildSendEmailVerificationButton() {
+  //Builds email field
+  Widget buildEmailTextField() {
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(100, 0, 100, 0),
+      padding: const EdgeInsetsDirectional.fromSTEB(30, 20, 30, 0),
+      child: TextFormField(
+        controller: _email,
+        obscureText: false,
+        decoration: InputDecoration(
+          hintText: 'Enter your email address',
+          hintStyle: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 16,
+            color: lightGrayColour,
+            fontWeight: FontWeight.normal,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          prefixIcon: const Icon(
+              Icons.mail_outline,
+              color: lightGrayColour,
+            ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: Colors.white,
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: darkBlueColour,
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: Colors.red,
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: Colors.red,
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        keyboardType: TextInputType.emailAddress,
+      ),
+    );
+  }
+
+  
+  //Builds send recovery email button
+  Widget buildSendRecoveryEmailButton() {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(80, 60, 80, 0),
       child: SizedBox(
-        height: 40,
+        height: 50,
         child: ElevatedButton(
           onPressed: () async {
             FocusManager.instance.primaryFocus?.unfocus();
             await Future.delayed(const Duration(milliseconds: 200));
-            sendEmailVerificationButtonPressed();
+            sendRecoveryEmailButtonPressed();
           },
           style: ButtonStyle(
             foregroundColor: MaterialStateProperty
@@ -145,7 +174,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                 )
               ),
           ),
-          child: const Text('Send Email',
+          child: const Text('Send Recovery Email',
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w700,
@@ -157,18 +186,29 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
     );
   }
 
-  //Runs when send email verification button is pressed
-  void sendEmailVerificationButtonPressed() async {
-    //Sends email verification again
-    context.read<AuthBloc>().add(const AuthEventSendEmailVerification());
-    showVerificationEmailSent(context);
+  //Runs when register button is pressed
+  void sendRecoveryEmailButtonPressed() {
+    //Send recovery email
+    final email = _email.text;
+    context.read<AuthBloc>().add(AuthEventForgotPassword(email: email));
   }
 
 
   @override
   Widget build(BuildContext context) {
     //Listen to state changes
-    return GestureDetector(
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) async {
+        if (state is AuthStateForgotPassword) {
+          if (state.hasSentEmail) {
+            _email.clear();
+            await showRecoveryEmailSent(context);
+          } else if (state.exception != null) {
+            // await showErrorDialog(context, "Recovery email could not be sent. Please try again later.");
+          }
+        }
+      },
+      child: GestureDetector(
             onTap: () {
               FocusScope.of(context).requestFocus(FocusNode());
             },
@@ -193,21 +233,12 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                               ],
                             ),
                           ),
-
-                          //Verify email title
-                          buildVerifyEmailTitle(),
-
-                          //Verify email body
-                          buildVerifyEmailContent(),
-
-                          //Did not receive email message
-                          buildDidNotReceiveMessage(),
     
+                          //Email field
+                          buildEmailTextField(),
     
-                         
-    
-                          //Register button
-                          buildSendEmailVerificationButton(),
+                          //Send recovery email button
+                          buildSendRecoveryEmailButton(),
     
                         ]
                     ),
@@ -215,6 +246,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                 )
               )
             )
+          ),
     );
   }
 }

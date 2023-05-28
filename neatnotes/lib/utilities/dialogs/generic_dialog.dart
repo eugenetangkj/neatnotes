@@ -22,7 +22,15 @@ Future<T?> showGenericDialog<T>({
           fontSize: 24,
         )
       ),
-      content: Text(content),
+      content: Text(
+        content,
+        style: const TextStyle(
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.w400,
+          fontSize: 18,
+          height: 1.5,
+        )
+      ),
       actions: options.keys.map((optionTitle) {
         final value = options[optionTitle];
         return TextButton(

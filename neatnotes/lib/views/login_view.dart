@@ -206,8 +206,8 @@ class _LoginViewState extends State<LoginView> {
                     ?.unfocus();
                 await Future.delayed(const Duration(
                     milliseconds: 200));
-                //TODO: Navigate to forgot password screen
-                print("Forgot password button pressed");
+                //Navigate to forgot password screen
+                context.read<AuthBloc>().add(AuthEventForgotPassword());
               },
               style: ButtonStyle(
                 backgroundColor:
@@ -344,7 +344,7 @@ class _LoginViewState extends State<LoginView> {
                     ?.unfocus();
                 await Future.delayed(const Duration(
                     milliseconds: 200));
-                //TODO: Navigate to forgot password screen
+                //Navigate to register screen
                 context.read<AuthBloc>().add(AuthEventShouldRegister());
               },
               style: ButtonStyle(
@@ -377,6 +377,7 @@ class _LoginViewState extends State<LoginView> {
   //Read in the auth bloc and convey the event to the auth bloc to react accordingly
   context.read<AuthBloc>().add(AuthEventLogin(email, password));
  }
+
 
 
   @override
