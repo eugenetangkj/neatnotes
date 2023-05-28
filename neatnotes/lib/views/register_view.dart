@@ -59,7 +59,7 @@ class _RegisterViewState extends State<RegisterView> {
                     ?.unfocus();
                 await Future.delayed(const Duration(
                     milliseconds: 200));
-                //TODO: Navigate to forgot password screen
+                //Navigate to login screen
                 context.read<AuthBloc>().add(const AuthEventLogout());
               },
               style: ButtonStyle(

@@ -29,8 +29,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final email = event.email;
       final password = event.password;
       try {
+        emit(const AuthStateRegistering(exception: null, isLoading: true));
         await provider.createUser(email: email, password: password);
         await provider.sendEmailVerification();
+        emit(const AuthStateRegistering(exception: null, isLoading: false));
         emit(const AuthStateNeedsVerification(isLoading: false));
       } on Exception catch (e) {
         emit(AuthStateRegistering(exception: e, isLoading: false));
@@ -66,6 +68,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (! user.isEmailVerified) {
           //Can log user in but his email is not verified
           emit(const AuthStateLoggedOut(exception: null, isLoading: false)); //Stops the loading
+          await provider.sendEmailVerification(); //Send email verification
           emit(const AuthStateNeedsVerification(isLoading: false));
         } else {
           //Can log user in and his email is verified

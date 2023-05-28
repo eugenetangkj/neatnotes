@@ -11,6 +11,7 @@ import 'package:neatnotes/services/auth/firebase_auth_provider.dart';
 import 'package:neatnotes/views/login_view.dart';
 import 'package:neatnotes/views/notes_view.dart';
 import 'package:neatnotes/views/register_view.dart';
+import 'package:neatnotes/views/verify_email_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized;
@@ -61,8 +62,11 @@ class HomePage extends StatelessWidget {
         } else if (state is AuthStateRegistering) {
           return const RegisterView();
         } else if (state is AuthStateNeedsVerification) {
+          return const VerifyEmailView();
+        } else if (state is AuthStateLoggedIn) {
           return const NotesView();
-        } else {
+        }
+         else {
           return const Scaffold(body: CircularProgressIndicator());
         }
 
