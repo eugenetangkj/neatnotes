@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neatnotes/constants/colors.dart';
+import 'package:neatnotes/services/auth/auth_exceptions.dart';
+import 'package:neatnotes/services/auth/bloc/auth_event.dart';
+import 'package:neatnotes/services/auth/bloc/auth_state.dart';
+import 'package:neatnotes/utilities/dialogs/error_dialog.dart';
+
+import '../services/auth/bloc/auth_bloc.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -68,6 +75,10 @@ class _LoginViewState extends State<LoginView> {
           ),
           filled: true,
           fillColor: Colors.white,
+          prefixIcon: const Icon(
+              Icons.mail_outline,
+              color: lightGrayColour,
+            ),
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(
               color: Colors.white,
@@ -97,6 +108,7 @@ class _LoginViewState extends State<LoginView> {
             borderRadius: BorderRadius.circular(20),
           ),
         ),
+        
         keyboardType: TextInputType.emailAddress,
       ),
     );
@@ -232,8 +244,8 @@ class _LoginViewState extends State<LoginView> {
             //Log the user in
             FocusManager.instance.primaryFocus?.unfocus();
             await Future.delayed(const Duration(milliseconds: 200));
-            //TODO: Navigate to logging in state
-            print("Login button pressed");
+            loginButtonPressed();
+           
           },
           style: ButtonStyle(
             foregroundColor: MaterialStateProperty
@@ -333,7 +345,7 @@ class _LoginViewState extends State<LoginView> {
                 await Future.delayed(const Duration(
                     milliseconds: 200));
                 //TODO: Navigate to forgot password screen
-                print("I do not have an account button pressed");
+                context.read<AuthBloc>().add(AuthEventShouldRegister());
               },
               style: ButtonStyle(
                 backgroundColor:
@@ -357,229 +369,69 @@ class _LoginViewState extends State<LoginView> {
       );
   }
 
-  // //Called when login button is pressed
-  // void loginButtonClicked() async {
-  //   String emailInput = _email.text;
-  //   String passwordInput = _password.text;
+ //Runs when the login button is pressed
+ void loginButtonPressed() {
+  //Get the contents in the text fields
+  final email = _email.text;
+  final password = _password.text;
+  //Read in the auth bloc and convey the event to the auth bloc to react accordingly
+  context.read<AuthBloc>().add(AuthEventLogin(email, password));
+ }
 
-  //   //Check if any fields are missing
-  //   if (emailInput.isEmpty) {
-  //     //Missing email input
-  //     showErrorDialog(context, "Email field cannot be left blank.");
-  //     return;
-  //   } else if (passwordInput.isEmpty) {
-  //     //Missing password input
-  //     showErrorDialog(context, "Password field cannot be left blank.");
-  //     return;
-  //   }
-    
-  //   //Email and password inputs are present. Proceed to login attempt
-  //   LoadingScreen().show(context: context, text: "Please wait while we log you in");
-  //   bool isTimedOut = false;
-  //   //Try to log user in, with max time limit for HTTP request to complete
-  //   bool? result = await UserRepository().userLogin(emailInput, passwordInput)
-  //     .timeout(
-  //       const Duration(seconds: maxSecondsBeforeLoginTimeOut),
-  //       onTimeout:() {
-  //         isTimedOut = true;
-  //         return false;
-  //       }
-  //     );
-
-  //   if (result) {
-  //     //Login successful. Navigate to projects list
-  //     LoadingScreen().hide();
-  //     navigateToProjectsList();
-  //   } else {
-  //     //Login unsuccessful.
-  //     LoadingScreen().hide();
-  //     switch (isTimedOut) {
-  //       //Case 1: Timeout
-  //       case (true):
-  //         showErrorDialog(context, timeOutMessage);
-  //         return;
-  //       //Case 2: Cannot authenticate user
-  //       case (false):
-  //         showErrorDialog(context, "Please ensure that your email and password are correct.");
-  //     }
-  //   }
-  // }
-
-  // //Called when forgot password button is pressed
-  // void forgotPasswordButtonClicked() {
-  //   Navigator.of(context).push(MaterialPageRoute(
-  //     builder: (context) => const ForgotPasswordView()
-  //   )
-  // );
-  // }
-
-  // //Navigate to projects list
-  // void navigateToProjectsList() {
-  //   Navigator.pushAndRemoveUntil(
-  //     context,
-  //     MaterialPageRoute(builder: (BuildContext context) {
-  //       return const CustomNavigationBar();
-  //     }),
-  //     (route) => false);
-  // }
-
-  // //Builds login title widget
-  // Widget buildLoginTitleWidget() {
-  //   return const Align(
-  //     alignment: AlignmentDirectional(-1, 0),
-  //     child: Padding(
-  //       padding: EdgeInsetsDirectional.fromSTEB(30, 40, 0, 0),
-  //       child: Text(
-  //         'Login',
-  //         style: TextStyle(
-  //             fontFamily: 'Roboto',
-  //             fontWeight: FontWeight.w700,
-  //             fontSize: 36,
-  //         )
-  //       ),
-  //     ),
-  //   );
-  // }
-
-
-
-
-  //Builds login button widget
-  // Widget buildLoginButtonWidget() {
-  //   return Padding(
-  //     padding: const EdgeInsetsDirectional.fromSTEB(0, 80, 0, 0),
-  //     child: SizedBox(
-  //       width: 200,
-  //       height: 60,
-  //       child: TextButton(
-  //         onPressed: () async {
-  //           //Log the user in
-  //           FocusManager.instance.primaryFocus?.unfocus();
-  //           await Future.delayed(const Duration(milliseconds: 200));
-  //           loginButtonClicked();
-  //         },
-  //         style: ButtonStyle(
-  //           foregroundColor: MaterialStateProperty
-  //               .resolveWith<Color?>(
-  //                   (Set<MaterialState> states) {
-  //             return Colors.white;
-  //           }),
-  //           backgroundColor: MaterialStateProperty
-  //               .resolveWith<Color?>(
-  //                   (Set<MaterialState> states) {
-  //             return companyLogoRedColour;
-  //           }),
-  //           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-  //               RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(90),
-  //               )
-  //             ),
-  //         ),
-  //         child: const Text('LOGIN',
-  //             style: TextStyle(
-  //               fontFamily: 'Roboto',
-  //               fontWeight: FontWeight.w700,
-  //               fontSize: 20,
-  //             )
-  //           ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  //Builds forgot password widget
-  // Widget buildForgotPasswordButtonWidget() {
-  //   return Padding(
-  //     padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-  //     child: SizedBox(
-  //       height: 40,
-  //       child: TextButton(
-  //           onPressed: () async {
-  //             //Force keyboard to close
-  //             FocusManager.instance.primaryFocus
-  //                 ?.unfocus();
-  //             await Future.delayed(const Duration(
-  //                 milliseconds: 200));
-  //             //Navigate to forgot password screen
-  //             forgotPasswordButtonClicked();
-  //           },
-  //           style: ButtonStyle(
-  //             backgroundColor:
-  //                 MaterialStateProperty
-  //                     .resolveWith<Color?>(
-  //                         (Set<MaterialState>
-  //                             states) {
-  //               return Colors.transparent;
-  //             }),
-  //           ),
-  //           child: const Text(
-  //             'Forgot Password?',
-  //             style: TextStyle(
-  //                 fontFamily: 'Roboto',
-  //                 fontWeight: FontWeight.w400,
-  //                 fontSize: 16,
-  //                 color: companyLogoRedColour),
-  //           )
-  //         ),
-  //     )
-  //     );
-  // }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
+    return BlocListener<AuthBloc, AuthState>(
+      //Listens to state changes, displaying error messages accordingly
+      listener: (context, state) async {
+        if (state is AuthStateLoggedOut) {
+          if (state.exception is UserNotFoundAuthException) {
+            await showErrorDialog(context, "User is not found.");
+          } else if (state.exception is WrongPasswordAuthException) {
+            await showErrorDialog(context, 'Incorrect password.');
+          } else if (state.exception is GeneralAuthException) {
+            await showErrorDialog(context, "Authentication error.");
+          }
+        }
       },
-      child: Scaffold(
-        backgroundColor: lightBlueBackgroundColour,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                //Login Graphic
-                buildLoginGraphicWidget(),
-
-                //Email text field
-                buildEmailTextFieldWidget(),
-
-                //Password text field
-                buildPasswordTextFieldWidget(),
-
-                //Forgot password button
-                buildForgotPasswordButtonWidget(),
-
-                 //Login button
-                buildLoginButtonWidget(),
-
-                //Google sign in button
-                buildGoogleSignInButtonWidget(),
-
-                //I do not have an account button
-                buildNoAccountButtonWidget(),
-
-
-        
-                // //Login title
-                // buildLoginTitleWidget(),
-        
-                // //Email text field
-                // buildEmailTextFieldWidget(),
-        
-                //Password text field
-                // buildPasswordTextFieldWidget(),
-              
-                // //Login button
-                // buildLoginButtonWidget(),
-        
-                // //Forgot password button
-                // buildForgotPasswordButtonWidget(),
-              ]
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: Scaffold(
+          backgroundColor: lightBlueBackgroundColour,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  //Login Graphic
+                  buildLoginGraphicWidget(),
+    
+                  //Email text field
+                  buildEmailTextFieldWidget(),
+    
+                  //Password text field
+                  buildPasswordTextFieldWidget(),
+    
+                  //Forgot password button
+                  buildForgotPasswordButtonWidget(),
+    
+                   //Login button
+                  buildLoginButtonWidget(),
+    
+                  //Google sign in button
+                  buildGoogleSignInButtonWidget(),
+    
+                  //I do not have an account button
+                  buildNoAccountButtonWidget(),
+    
+                ]
+              ),
             ),
           ),
-        ),
-      )
+        )
+      ),
     );
   }
 }
