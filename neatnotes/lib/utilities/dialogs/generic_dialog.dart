@@ -41,7 +41,15 @@ Future<T?> showGenericDialog<T>({
               Navigator.of(context).pop();
             }
           },
-          child: Text(optionTitle),
+          child: Text(
+            optionTitle,
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+              height: 1.5,
+            )
+          ),
         );
       }).toList(),
     );

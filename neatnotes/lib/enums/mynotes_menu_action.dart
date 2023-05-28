@@ -1,0 +1,4 @@
+enum MyNotesMenuAction {
+  deleteAll,
+  logout,
+}
