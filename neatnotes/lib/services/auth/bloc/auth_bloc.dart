@@ -145,6 +145,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     provider = newProvider;
   }
 
+  //Gets the provider
+  AuthProvider getAuthProvider() {
+    return provider;
+  }
+
 
 
 

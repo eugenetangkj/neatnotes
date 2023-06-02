@@ -53,7 +53,7 @@ class FirestoreCloudStorage {
     return latestNotes;
   }
 
-  //Updates an existing note
+  //Updates an existing note using all fields
   Future<void> updateNote({
     required String noteId,
     required String updatedTitle,
@@ -66,12 +66,62 @@ class FirestoreCloudStorage {
           titleFieldName: updatedTitle,
           contentFieldName: updatedContent,
           dateTimeFieldName: updatedDateTime,
-          updatedCategory: updatedCategory,
+          categoryFieldName: updatedCategory,
         });
       } catch (e) {
         throw CouldNotUpdateNoteException();
       }
   }
+
+  //Updates an existing note's title
+  Future<void> updateNoteTitle({required String noteId,required String updatedTitle,}) async {
+    try {
+      //Try updating the note in the backend
+      await allNotes.doc(noteId).update({
+        titleFieldName: updatedTitle,
+      });
+    } catch (e) {
+      throw CouldNotUpdateNoteException();
+    }
+  }
+
+  //Updates an existing note's content
+  Future<void> updateNoteContent({required String noteId, required String updatedContent,}) async {
+    try {
+      //Try updating the note in the backend
+      await allNotes.doc(noteId).update({
+        contentFieldName: updatedContent,
+      });
+    } catch (e) {
+      throw CouldNotUpdateNoteException();
+    }
+  }
+
+  //Updates an existing note's category
+  Future<void> updateNoteCategory({required String noteId, required String updatedCategory,}) async {
+    try {
+      //Try updating the note in the backend
+      await allNotes.doc(noteId).update({
+        categoryFieldName: updatedCategory,
+      });
+    } catch (e) {
+      throw CouldNotUpdateNoteException();
+    }
+  }
+
+  //Updates an existing note's datetime
+  Future<void> updateNoteDateTime({required String noteId, required String updatedDateTime,}) async {
+    try {
+      //Try updating the note in the backend
+      await allNotes.doc(noteId).update({
+        dateTimeFieldName: updatedDateTime,
+      });
+    } catch (e) {
+      throw CouldNotUpdateNoteException();
+    }
+  }
+
+
 
   //Deletes a note
   Future<void> deleteNote({required String noteId}) async {
