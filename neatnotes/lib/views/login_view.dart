@@ -4,8 +4,8 @@ import 'package:neatnotes/constants/colors.dart';
 import 'package:neatnotes/services/auth/auth_exceptions.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
 import 'package:neatnotes/services/auth/bloc/auth_state.dart';
+import 'package:neatnotes/services/auth/google_acc_auth_provider.dart';
 import 'package:neatnotes/utilities/dialogs/error_dialog.dart';
-
 import '../services/auth/bloc/auth_bloc.dart';
 
 class LoginView extends StatefulWidget {
@@ -296,8 +296,11 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
           onPressed: () async {
-            //TODO: Google sign in
-            print("Google sign in button pressed");
+            //Google sign in
+            FocusManager.instance.primaryFocus?.unfocus();
+            await Future.delayed(const Duration(milliseconds: 200));
+            // context.read<AuthBloc>().add(const AuthEventLogout());
+            context.read<AuthBloc>().add(const AuthEventLogin('', ''));
           },
 
           child: Padding(
@@ -369,14 +372,17 @@ class _LoginViewState extends State<LoginView> {
       );
   }
 
- //Runs when the login button is pressed
- void loginButtonPressed() {
-  //Get the contents in the text fields
-  final email = _email.text;
-  final password = _password.text;
-  //Read in the auth bloc and convey the event to the auth bloc to react accordingly
-  context.read<AuthBloc>().add(AuthEventLogin(email, password));
- }
+  //Runs when the login button is pressed
+  void loginButtonPressed() {
+    //Get the contents in the text fields
+    final email = _email.text;
+    final password = _password.text;
+    //Read in the auth bloc and convey the event to the auth bloc to react accordingly
+    context.read<AuthBloc>().add(AuthEventLogin(email, password));
+  }
+
+
+  //Runs when the google sign in button is pressed
 
 
 
@@ -390,7 +396,7 @@ class _LoginViewState extends State<LoginView> {
             await showErrorDialog(context, "User is not found.");
           } else if (state.exception is WrongPasswordAuthException) {
             await showErrorDialog(context, 'Incorrect password.');
-          } else if (state.exception is GeneralAuthException) {
+          } else if (state.exception is GenericAuthException) {
             await showErrorDialog(context, "Authentication error.");
           }
         }

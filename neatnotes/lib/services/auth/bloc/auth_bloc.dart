@@ -6,9 +6,11 @@ import 'package:neatnotes/services/auth/bloc/auth_state.dart';
 //Auth bloc takes in AuthEvents and react accordingly, emitting AuthStates that will
 //be received by the UI
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  late AuthProvider provider;
   //Determines the type of provider that we are working with.
   //AuthBloc starts with an initial state of being uninitialised where it is currently loading Firebase
-  AuthBloc(AuthProvider provider) : super(const AuthStateUninitialized(isLoading: true)) {
+  AuthBloc(AuthProvider providerToAdd) : super(const AuthStateUninitialized(isLoading: true)) {
+    provider = providerToAdd;
     //Handle different AuthEvents, producing different AuthStates accordingly
 
     //Event: The user needs to register for an account
@@ -128,11 +130,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
 
 
-
   }
 
 
 
+  //Switches the type of provider that we are working with
+  void switchAuthProvider(AuthProvider newProvider) {
+    provider = newProvider;
+  }
 
 
 

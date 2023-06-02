@@ -380,7 +380,7 @@ class _RegisterViewState extends State<RegisterView> {
             await showErrorDialog(context, "Email is already taken.");
           } else if (state.exception is InvalidEmailAuthException) {
             await showErrorDialog(context, "Please enter an email of valid format.");
-          } else if (state.exception is GeneralAuthException) {
+          } else if (state.exception is GenericAuthException) {
             await showErrorDialog(context, "Registration error.");
           }
         }

@@ -8,6 +8,7 @@ import 'package:neatnotes/services/auth/bloc/auth_bloc.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
 import 'package:neatnotes/services/auth/bloc/auth_state.dart';
 import 'package:neatnotes/services/auth/firebase_auth_provider.dart';
+import 'package:neatnotes/services/auth/google_acc_auth_provider.dart';
 import 'package:neatnotes/views/forgot_password_view.dart';
 import 'package:neatnotes/views/login_view.dart';
 import 'package:neatnotes/views/notes_view.dart';
@@ -30,7 +31,7 @@ void main() {
     home: BlocProvider<AuthBloc>(
       //The bloc provider injects the AuthBloc into the context, so we can retrieve
       //the bloc from the context later on
-      create: (context) => AuthBloc(FirebaseAuthProvider()),
+      create: (context) => AuthBloc(GoogleAccAuthProvider()), //FirebaseAuthProvider()
       child: const HomePage(),
     ),
   ));

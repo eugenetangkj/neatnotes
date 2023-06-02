@@ -1,16 +1,16 @@
+//An auth provider that provides authentication functionality through Google sign in
 
 
-//An auth provider that provides authentication functionality through the native Firebase
-//email and password login
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:neatnotes/firebase_options.dart';
 import 'package:neatnotes/services/auth/auth_exceptions.dart';
 import 'package:neatnotes/services/auth/auth_provider.dart';
 import 'package:neatnotes/services/auth/auth_user.dart';
 
-class FirebaseAuthProvider implements AuthProvider {
-  
+class GoogleAccAuthProvider implements AuthProvider {
+
   @override
   Future<void> initialize() async {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
@@ -49,46 +49,43 @@ class FirebaseAuthProvider implements AuthProvider {
   }
 
   @override
-  AuthUser? get getCurrentUser {
-    //Creates the AuthUser from the Firebase user
-    final user = FirebaseAuth.instance.currentUser;
-    if (user!= null) {
-      //User is logged in
-      return AuthUser.fromFirebase(user);
-    } else {
-      return null;
-    }
-  }
-
-  @override
   Future<AuthUser> login({required String email, required String password}) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-      final user = getCurrentUser;
-      if (user != null) {
-        //User managed to log in successfully
-        return user;
-      } else {
-        //User did not log in successfully but no exceptions were thrown
-        throw UserNotLoggedInAuthException();
+    FirebaseAuth authInstance = FirebaseAuth.instance;
+
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        idToken: googleSignInAuthentication.idToken,
+        accessToken: googleSignInAuthentication.accessToken,
+      );
+
+      //Credentials obtained. Try to sign user in
+      try {
+        final UserCredential userCredential = await authInstance.signInWithCredential(credential);
+        User? user = userCredential.user;
+        if (user != null) {
+          return AuthUser.fromFirebase(user);
+        } else {
+          throw GenericAuthException();
+        }
       }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == "invalid-email") {
-        //Invalid login email format
-        throw InvalidEmailAuthException();
-      } else if (e.code == "user-not-found") {
-        //User does not exist
-        throw UserNotFoundAuthException();
-      } else if (e.code == "wrong-password") {
-        //User entered wrong login password
-        throw WrongPasswordAuthException();
-      } else {
-        //All other FirebaseAuthExceptions
+      on FirebaseAuthException catch (e) {
+        if (e.code == 'wrong-password') {
+          throw WrongPasswordAuthException();
+        } else if (e.code == 'invalid-credential') {
+          throw UserNotFoundAuthException();
+        } else {
+          throw GenericAuthException();
+        }
+      } catch (e) {
+        //Any other non-FirebaseAuthExceptions
         throw GenericAuthException();
-      }
-    } catch (e) {
-      //Any other non-FirebaseAuthExceptions
-      throw GenericAuthException();
+      } 
+    } else {
+      throw NeverLogInException(); 
     }
   }
 
@@ -97,6 +94,7 @@ class FirebaseAuthProvider implements AuthProvider {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       //User is currently logged in. Log him out.
+      await GoogleSignIn().signOut();
       await FirebaseAuth.instance.signOut();
     } else {
       //No user is currently logged in. Cannot perform log out operation
@@ -106,14 +104,7 @@ class FirebaseAuthProvider implements AuthProvider {
 
   @override
   Future<void> sendEmailVerification() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      //User is logged in but email is not verified.
-      await user.sendEmailVerification();
-    } else {
-      //User is not logged in. Cannot send email verification
-      throw UserNotLoggedInAuthException();
-    }
+    //For google sign in, email is automatically verified. Hence, we do not need to do anything
   }
 
   @override
@@ -136,7 +127,16 @@ class FirebaseAuthProvider implements AuthProvider {
       throw GenericAuthException();
     }
   }
+
+  @override
+  AuthUser? get getCurrentUser {
+    //Creates the AuthUser from the Firebase user
+    final user = FirebaseAuth.instance.currentUser;
+    if (user!= null) {
+      //User is logged in
+      return AuthUser.fromFirebase(user);
+    } else {
+      return null;
+    }
+  }
 }
-
-
-
