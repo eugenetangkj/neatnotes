@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neatnotes/constants/colors.dart';
+import 'package:neatnotes/constants/routes.dart';
 import 'package:neatnotes/helpers/colors/generate_material_color.dart';
 import 'package:neatnotes/helpers/loading/loading_screen.dart';
-import 'package:neatnotes/services/auth/auth_exceptions.dart';
 import 'package:neatnotes/services/auth/bloc/auth_bloc.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
 import 'package:neatnotes/services/auth/bloc/auth_state.dart';
 import 'package:neatnotes/services/auth/firebase_auth_provider.dart';
-import 'package:neatnotes/services/auth/google_acc_auth_provider.dart';
 import 'package:neatnotes/views/forgot_password_view.dart';
 import 'package:neatnotes/views/login_view.dart';
 import 'package:neatnotes/views/notes_view.dart';
 import 'package:neatnotes/views/register_view.dart';
 import 'package:neatnotes/views/verify_email_view.dart';
+
+import 'views/create_update_note_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized;
@@ -35,6 +36,9 @@ void main() {
       create: (context) => AuthBloc(FirebaseAuthProvider()),
       child: const HomePage(),
     ),
+    routes: {
+      createOrUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
+    }
   ));
 }
 

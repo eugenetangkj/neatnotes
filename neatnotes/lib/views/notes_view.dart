@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neatnotes/constants/colors.dart';
+import 'package:neatnotes/constants/routes.dart';
 import 'package:neatnotes/enums/mynotes_menu_action.dart';
 import 'package:neatnotes/services/auth/bloc/auth_bloc.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
@@ -40,12 +41,12 @@ class _NotesViewState extends State<NotesView> {
   //Builds pop up menu widget
   Widget buildPopupMenuWidget() {
     return Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 30, 0),
+        padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 30, 0),
         child: PopupMenuButton<MyNotesMenuAction>(
           icon: const Icon(
             Icons.more_vert,
             color: darkBlueColour,
-            size: 48,
+            size: 36,
           ), onSelected: (value) async {
             switch (value) {
               case MyNotesMenuAction.deleteAll:
@@ -78,12 +79,32 @@ class _NotesViewState extends State<NotesView> {
   }
 
 
+  //Builds floating action button
+  Widget buildFloatingActionButon() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: FloatingActionButton(
+        backgroundColor: darkBlueColour,
+        onPressed: () {
+          //Navigate to add note view
+          Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
+        },
+        child: const Icon(
+          Icons.add,
+          size: 36,
+          
+          ),
+      ),
+    );
+  }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: lightBlueBackgroundColour,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: buildFloatingActionButon(),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
