@@ -104,9 +104,16 @@ class GoogleAccAuthProvider implements AuthProvider {
 
   @override
   Future<void> sendEmailVerification() async {
-    //For google sign in, email is automatically verified. Hence, we do not need to do anything
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      //User is logged in but email is not verified.
+      await user.sendEmailVerification();
+    } else {
+      //User is not logged in. Cannot send email verification
+      throw UserNotLoggedInAuthException();
+    }
   }
-
+  
   @override
   Future<void> sendPasswordResetEmail({required String toEmail}) async {
     try {

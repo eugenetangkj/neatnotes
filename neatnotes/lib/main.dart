@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neatnotes/constants/colors.dart';
 import 'package:neatnotes/helpers/colors/generate_material_color.dart';
 import 'package:neatnotes/helpers/loading/loading_screen.dart';
+import 'package:neatnotes/services/auth/auth_exceptions.dart';
 import 'package:neatnotes/services/auth/bloc/auth_bloc.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
 import 'package:neatnotes/services/auth/bloc/auth_state.dart';
@@ -31,7 +32,7 @@ void main() {
     home: BlocProvider<AuthBloc>(
       //The bloc provider injects the AuthBloc into the context, so we can retrieve
       //the bloc from the context later on
-      create: (context) => AuthBloc(GoogleAccAuthProvider()), //FirebaseAuthProvider()
+      create: (context) => AuthBloc(FirebaseAuthProvider()),
       child: const HomePage(),
     ),
   ));

@@ -82,7 +82,7 @@ class FirebaseAuthProvider implements AuthProvider {
       } else if (e.code == "wrong-password") {
         //User entered wrong login password
         throw WrongPasswordAuthException();
-      } else {
+      } else {    
         //All other FirebaseAuthExceptions
         throw GenericAuthException();
       }

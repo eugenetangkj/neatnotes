@@ -359,11 +359,25 @@ class _RegisterViewState extends State<RegisterView> {
     final password = _password.text;
     final confirmPassword = _confirmPassword.text;
 
+    //Check if user entered all fields
+    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      showErrorDialog(context, "Please fill up all the fields.");
+      return;
+    }
+
     //Check whether password is the same as confirm password
     if (password != confirmPassword) {
       showErrorDialog(context, "Password and Confirm Password do not match.");
       return;
     }
+
+    //Check whether email is of correct format
+    if (! (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email))) {
+      //Invalid email format
+      showErrorDialog(context, "Please enter an email address of valid format.");
+      return;
+    }
+
     context.read<AuthBloc>().add(AuthEventRegister(email, password));
   }
 

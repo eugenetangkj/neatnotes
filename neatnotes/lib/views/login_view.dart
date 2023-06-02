@@ -4,6 +4,7 @@ import 'package:neatnotes/constants/colors.dart';
 import 'package:neatnotes/services/auth/auth_exceptions.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
 import 'package:neatnotes/services/auth/bloc/auth_state.dart';
+import 'package:neatnotes/services/auth/firebase_auth_provider.dart';
 import 'package:neatnotes/services/auth/google_acc_auth_provider.dart';
 import 'package:neatnotes/utilities/dialogs/error_dialog.dart';
 import '../services/auth/bloc/auth_bloc.dart';
@@ -299,8 +300,7 @@ class _LoginViewState extends State<LoginView> {
             //Google sign in
             FocusManager.instance.primaryFocus?.unfocus();
             await Future.delayed(const Duration(milliseconds: 200));
-            // context.read<AuthBloc>().add(const AuthEventLogout());
-            context.read<AuthBloc>().add(const AuthEventLogin('', ''));
+            googleButtonPressed();
           },
 
           child: Padding(
@@ -377,12 +377,29 @@ class _LoginViewState extends State<LoginView> {
     //Get the contents in the text fields
     final email = _email.text;
     final password = _password.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      showErrorDialog(context, "Please fill up all the fields.");
+      return;
+    }
+
+    if (! (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email))) {
+      //Invalid email format
+      showErrorDialog(context, "Please enter an email address of valid format.");
+      return;
+    }
+
     //Read in the auth bloc and convey the event to the auth bloc to react accordingly
+    context.read<AuthBloc>().switchAuthProvider(FirebaseAuthProvider());
     context.read<AuthBloc>().add(AuthEventLogin(email, password));
   }
 
 
   //Runs when the google sign in button is pressed
+  void googleButtonPressed() {
+    context.read<AuthBloc>().switchAuthProvider(GoogleAccAuthProvider());
+    context.read<AuthBloc>().add(const AuthEventLogin('', ''));
+  }
 
 
 

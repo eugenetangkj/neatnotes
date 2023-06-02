@@ -10,8 +10,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   //Determines the type of provider that we are working with.
   //AuthBloc starts with an initial state of being uninitialised where it is currently loading Firebase
   AuthBloc(AuthProvider providerToAdd) : super(const AuthStateUninitialized(isLoading: true)) {
-    provider = providerToAdd;
     //Handle different AuthEvents, producing different AuthStates accordingly
+    provider = providerToAdd;
 
     //Event: The user needs to register for an account
     on<AuthEventShouldRegister>((event, emit) {
@@ -20,6 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     //Event: The user wants to get the verification email
     on<AuthEventSendEmailVerification>((event, emit) async {
+      switchAuthProvider(provider);
       await provider.sendEmailVerification();
       //When user presses the get verification email, the email is sent but there will not
       //be changes in the UI. So should just retain the current state
@@ -28,6 +29,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     //Event: The user wants to register for an account
     on<AuthEventRegister>((event, emit) async {
+      switchAuthProvider(provider);
       final email = event.email;
       final password = event.password;
       try {
@@ -43,6 +45,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     //Event: The user wants to initialise the auth service
     on<AuthEventInitialize>((event, emit) async {
+      switchAuthProvider(provider);
       //Initialise the provider
       await provider.initialize();
       final user = provider.getCurrentUser;
@@ -60,6 +63,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     //Event: The user wants to login
     on<AuthEventLogin>((event, emit) async {
+      switchAuthProvider(provider);
       //When user wants to log in, he is currently logged out and is awaiting for verification
       emit(const AuthStateLoggedOut(exception: null, isLoading: true));
       final email = event.email;
@@ -85,6 +89,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     //Event: The user wants to log out
     on<AuthEventLogout>((event, emit) async {
+      switchAuthProvider(provider);
       try {
         await provider.logout();
         emit(const AuthStateLoggedOut(exception: null, isLoading: false));
@@ -95,6 +100,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     //Event: The user wants to reset password because he forgot his password
     on<AuthEventForgotPassword>((event, emit) async {
+      switchAuthProvider(provider);
       //Navgiate to forgot password screen
       emit(const AuthStateForgotPassword(exception: null, hasSentEmail: false, isLoading: false));
       final email = event.email;

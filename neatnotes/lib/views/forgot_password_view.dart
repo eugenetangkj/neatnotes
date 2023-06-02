@@ -188,8 +188,16 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
 
   //Runs when register button is pressed
   void sendRecoveryEmailButtonPressed() {
-    //Send recovery email
+    //Send recovery email  
     final email = _email.text;
+    if (_email.text.isEmpty) {
+      showErrorDialog(context, "Please fill up all the fields.");
+      return;
+    } else if (! (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email))) {
+      //Invalid email format
+      showErrorDialog(context, "Please enter an email address of valid format.");
+      return;
+    }
     context.read<AuthBloc>().add(AuthEventForgotPassword(email: email));
   }
 
