@@ -3,12 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:neatnotes/constants/colors.dart';
 import 'package:neatnotes/enums/mynotes_menu_action.dart';
+import 'package:neatnotes/enums/notesview_menu_action.dart';
 import 'package:neatnotes/extensions/context_get_arguments.dart';
 import 'package:neatnotes/services/auth/auth_service.dart';
 import 'package:neatnotes/services/auth/bloc/auth_bloc.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
 import 'package:neatnotes/services/cloud/cloud_note.dart';
 import 'package:neatnotes/services/cloud/firestore_cloud_storage.dart';
+import 'package:neatnotes/utilities/dialogs/delete_single_note_dialog.dart';
+import 'package:neatnotes/utilities/dialogs/error_dialog.dart';
 import 'package:neatnotes/utilities/dialogs/logout_dialog.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 
@@ -262,18 +265,31 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   Widget buildPopupMenuWidget() {
     return Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(0, 30, 30, 0),
-        child: PopupMenuButton<MyNotesMenuAction>(
+        child: PopupMenuButton<NotesViewMenuAction>(
           icon: const Icon(
             Icons.more_vert,
             color: darkBlueColour,
             size: 36,
           ), onSelected: (value) async {
             switch (value) {
-              case MyNotesMenuAction.deleteAll:
-                //TODO: Delete all notes functionality
-                print("Delete all notes");
+              case NotesViewMenuAction.deleteNote:
+                //Ask user for confirmation
+                final shouldDeleteNote = await showDeleteSingleNoteDialog(context);
+                if (shouldDeleteNote) {
+                  //User confirms that he wants to delete note
+                  final noteToDelete = _note;
+                  if (noteToDelete != null) {
+                    _notesService.deleteNote(noteId: noteToDelete.noteId);
+                  } else {
+                    //Note is not present. No need to delete
+                  }
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  await Future.delayed(const Duration(milliseconds: 200));
+                  //Navigate to login screen
+                  Navigator.of(context).pop();
+                }
                 break;
-              case MyNotesMenuAction.logout:
+              case NotesViewMenuAction.generatePdf:
                 //Ask user for confirmation
                 final shouldLogOut = await showLogoutDialog(context);
                 if (shouldLogOut) {
@@ -286,12 +302,12 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
           itemBuilder: (context) {
             return [
               const PopupMenuItem(
-                value: MyNotesMenuAction.deleteAll,
-                child: Text('Delete All Notes'),
+                value: NotesViewMenuAction.deleteNote,
+                child: Text('Delete Note'),
               ),
               const PopupMenuItem(
-                value: MyNotesMenuAction.logout,
-                child: Text('Logout')),
+                value: NotesViewMenuAction.generatePdf,
+                child: Text('Generate Pdf')),
             ];
           }
         ),
@@ -344,6 +360,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         controller: _titleController,
         obscureText: false,
         decoration: InputDecoration(
+          contentPadding: const EdgeInsets.all(20),
           hintText: 'Enter a title for your note',
           hintStyle: const TextStyle(
             fontFamily: 'Roboto',
@@ -415,10 +432,12 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
             fontSize: 16,
             fontWeight: FontWeight.normal,
             height: 1.5,
+            
         ),
         controller: _contentController,
         obscureText: false,
         decoration: InputDecoration(
+          contentPadding: const EdgeInsets.all(20),
           hintText: 'Enter content for your note',
           hintStyle: const TextStyle(
             fontFamily: 'Roboto',

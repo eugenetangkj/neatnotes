@@ -1,0 +1,4 @@
+enum NotesViewMenuAction {
+  deleteNote,
+  generatePdf,
+}
