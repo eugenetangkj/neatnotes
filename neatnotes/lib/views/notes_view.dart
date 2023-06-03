@@ -3,11 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neatnotes/constants/colors.dart';
 import 'package:neatnotes/constants/routes.dart';
 import 'package:neatnotes/enums/mynotes_menu_action.dart';
+import 'package:neatnotes/helpers/loading/loading_screen.dart';
 import 'package:neatnotes/services/auth/auth_service.dart';
 import 'package:neatnotes/services/auth/bloc/auth_bloc.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
 import 'package:neatnotes/services/cloud/cloud_note.dart';
 import 'package:neatnotes/services/cloud/firestore_cloud_storage.dart';
+import 'package:neatnotes/utilities/dialogs/delete_all_notes_dialog.dart';
+import 'package:neatnotes/utilities/dialogs/error_dialog.dart';
 import 'package:neatnotes/utilities/dialogs/logout_dialog.dart';
 import 'package:neatnotes/views/notes_list_view.dart';
 
@@ -19,6 +22,9 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+  List<CloudNote> allNotesUi = [];
+
+
   //To manage notes from backend
   late final FirestoreCloudStorage _notesService;
   //To easily retrieve user id
@@ -58,9 +64,23 @@ class _NotesViewState extends State<NotesView> {
           ), onSelected: (value) async {
             switch (value) {
               case MyNotesMenuAction.deleteAll:
-                //TODO: Delete all notes functionality
-                print("Delete all notes");
+                //Ask user for confirmation
+                final shouldDeleteAllNotes = await showDeleteAllNotesDialog(context);
+                if (shouldDeleteAllNotes) {
+                  //User confirms that he wants to delete all notes
+
+                  //Check if user has any notes
+                  if (allNotesUi.isEmpty) {
+                    showErrorDialog(context, 'You do not have any notes.');
+                  } else {
+                    LoadingScreen().show(context: context, text: 'Deleting your notes...');
+                    _notesService.deleteAllNotes(notesToDelete: allNotesUi);
+                    await Future.delayed(const Duration(milliseconds: 100));
+                    LoadingScreen().hide();
+                  }
+                }
                 break;
+
               case MyNotesMenuAction.logout:
                 //Ask user for confirmation
                 final shouldLogOut = await showLogoutDialog(context);
@@ -119,6 +139,7 @@ class _NotesViewState extends State<NotesView> {
             if (snapshot.hasData) {
               final allNotes = snapshot.data as Iterable<CloudNote>;
               List<CloudNote> output = sortNotes(allNotes);
+              allNotesUi = output;
 
               //Generates the list of notes
               return NotesListView(

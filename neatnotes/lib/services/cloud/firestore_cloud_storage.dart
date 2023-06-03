@@ -21,7 +21,7 @@ class FirestoreCloudStorage {
 
   //Creates a new note
   Future<CloudNote> createNewNote({required String ownerUserId}) async {
-    String formattedDateTime = DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now());
+    String formattedDateTime = DateTime.now().toString().substring(0, 16);
     //Adds a new entry into the notes collection
     final document = await allNotes.add({
       ownerUserIdFieldName: ownerUserId,
@@ -122,7 +122,6 @@ class FirestoreCloudStorage {
   }
 
 
-
   //Deletes a note
   Future<void> deleteNote({required String noteId}) async {
     try {
@@ -132,4 +131,10 @@ class FirestoreCloudStorage {
     }
   }
 
+  //Deletes all notes
+  Future<void> deleteAllNotes({required List<CloudNote> notesToDelete}) async {
+    for (int i = 0; i < notesToDelete.length; i = i + 1) {
+      await allNotes.doc(notesToDelete[i].noteId).delete();
+    }
+  }
 }
