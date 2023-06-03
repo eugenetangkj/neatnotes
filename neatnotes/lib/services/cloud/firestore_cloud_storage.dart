@@ -21,7 +21,7 @@ class FirestoreCloudStorage {
 
   //Creates a new note
   Future<CloudNote> createNewNote({required String ownerUserId}) async {
-    String formattedDateTime = DateTime.now().toString().substring(0, 16);
+    String formattedDateTime = DateTime.now().toString().substring(0, 19);
     //Adds a new entry into the notes collection
     final document = await allNotes.add({
       ownerUserIdFieldName: ownerUserId,

@@ -163,7 +163,7 @@ class NotesListViewState extends State<NotesListView> {
                       ),
                       //Note date
                       trailing: Text(
-                        note.dateTime,
+                        note.dateTime.substring(0, 16),
                         maxLines: 1,
                         softWrap: true,
                         overflow: TextOverflow.ellipsis,

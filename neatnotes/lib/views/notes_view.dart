@@ -202,7 +202,9 @@ class _NotesViewState extends State<NotesView> {
         int.parse(firstDateTimeString.substring(5, 7)),
         int.parse(firstDateTimeString.substring(8, 10)),
         int.parse(firstDateTimeString.substring(11, 13)),
-        int.parse(firstDateTimeString.substring(14,)),
+        int.parse(firstDateTimeString.substring(14,16)),
+        int.parse(firstDateTimeString.substring(17,)),
+
       );
 
       DateTime secondDateTime = DateTime.utc(
@@ -210,7 +212,9 @@ class _NotesViewState extends State<NotesView> {
         int.parse(secondDateTimeString.substring(5, 7)),
         int.parse(secondDateTimeString.substring(8, 10)),
         int.parse(secondDateTimeString.substring(11, 13)),
-        int.parse(secondDateTimeString.substring(14,)),
+        int.parse(secondDateTimeString.substring(14, 16)),
+        int.parse(secondDateTimeString.substring(17,)),
+
       );
 
 

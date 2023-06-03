@@ -137,7 +137,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       originalTitle = '';
       originalContent = '';
       originalCategories = [];
-      originalDateTime = DateTime.now().toString().substring(0, 16);
+      originalDateTime = DateTime.now().toString().substring(0, 19);
       _note = newNote;
       return newNote;
     }
@@ -193,7 +193,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       updatedTitle: title,
       updatedContent: content,
       updatedDateTime: (shouldUpdateTime)
-                       ? DateTime.now().toString().substring(0, 16)
+                       ? DateTime.now().toString().substring(0, 19)
                        : noteToCheck.dateTime,
       updatedCategories: categories);
 
@@ -204,7 +204,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         updatedTitle: "No title",
         updatedContent: content,
         updatedDateTime: (shouldUpdateTime)
-                       ? DateTime.now().toString().substring(0, 16)
+                       ? DateTime.now().toString().substring(0, 19)
                        : noteToCheck.dateTime,
         updatedCategories: categories
       );
@@ -215,7 +215,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         updatedTitle: title,
         updatedContent: "No content",
         updatedDateTime: (shouldUpdateTime)
-                       ? DateTime.now().toString().substring(0, 16)
+                       ? DateTime.now().toString().substring(0, 19)
                        : noteToCheck.dateTime,
         updatedCategories: categories);
     }
@@ -318,7 +318,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
         child: Text(
-          originalDateTime,
+          originalDateTime.substring(0, 16),
           style: const TextStyle(
             fontFamily: 'Roboto',
             fontWeight: FontWeight.w400,
