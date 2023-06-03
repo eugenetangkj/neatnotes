@@ -118,7 +118,7 @@ class _NotesViewState extends State<NotesView> {
             //No longer empty stream. Waiting for new updates
             if (snapshot.hasData) {
               final allNotes = snapshot.data as Iterable<CloudNote>;
-              Iterable<CloudNote> output = sortNotes(allNotes);
+              List<CloudNote> output = sortNotes(allNotes);
 
               //Generates the list of notes
               return NotesListView(
@@ -170,7 +170,7 @@ class _NotesViewState extends State<NotesView> {
   }
 
   //Sorts the list of notes
-  Iterable<CloudNote> sortNotes(Iterable<CloudNote> allNotes) {
+  List<CloudNote> sortNotes(Iterable<CloudNote> allNotes) {
     List<CloudNote> output = allNotes.toList();
     output.sort((a, b) {
       String firstDateTimeString = a.dateTime;
@@ -192,10 +192,11 @@ class _NotesViewState extends State<NotesView> {
         int.parse(secondDateTimeString.substring(14,)),
       );
 
+
       return firstDateTime.compareTo(secondDateTime);
     });
 
-    return output.reversed;
+    return output.reversed.toList();
   }
 
 

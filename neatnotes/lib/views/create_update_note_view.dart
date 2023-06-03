@@ -137,10 +137,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       originalTitle = '';
       originalContent = '';
       originalCategories = [];
-      originalDateTime =  DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now());
-
-
-
+      originalDateTime = DateTime.now().toString().substring(0, 16);
       _note = newNote;
       return newNote;
     }
@@ -196,7 +193,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       updatedTitle: title,
       updatedContent: content,
       updatedDateTime: (shouldUpdateTime)
-                       ? DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now())
+                       ? DateTime.now().toString().substring(0, 16)
                        : noteToCheck.dateTime,
       updatedCategories: categories);
 
@@ -207,7 +204,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         updatedTitle: "No title",
         updatedContent: content,
         updatedDateTime: (shouldUpdateTime)
-                       ? DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now())
+                       ? DateTime.now().toString().substring(0, 16)
                        : noteToCheck.dateTime,
         updatedCategories: categories
       );
@@ -218,7 +215,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         updatedTitle: title,
         updatedContent: "No content",
         updatedDateTime: (shouldUpdateTime)
-                       ? DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now())
+                       ? DateTime.now().toString().substring(0, 16)
                        : noteToCheck.dateTime,
         updatedCategories: categories);
     }
