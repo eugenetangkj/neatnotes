@@ -601,7 +601,23 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     
           default:
             //New note is still being created. Wait for new note to be created in the database
-            return const CircularProgressIndicator();
+            return Scaffold(
+              backgroundColor: lightBlueBackgroundColour,
+              body: Align(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    CircularProgressIndicator(),
+                    Text("Please hold on"),
+                  ],
+                ),
+              )
+            );
+            
+            
+    
         }
       }
     );

@@ -29,11 +29,5 @@ class CloudNote {
     title = snapshot.data()[titleFieldName],
     content = snapshot.data()[contentFieldName],
     dateTime = snapshot.data()[dateTimeFieldName],
-    category = snapshot.data()[categoryFieldName].isEmpty
-               ? []
-               : snapshot.data()[categoryFieldName].length == 1
-               ? [snapshot.data()[categoryFieldName][0]]
-               : snapshot.data()[categoryFieldName].length == 2
-               ? [snapshot.data()[categoryFieldName][0], snapshot.data()[categoryFieldName][1]]
-               : [snapshot.data()[categoryFieldName][0], snapshot.data()[categoryFieldName][1], snapshot.data()[categoryFieldName][2]];
+    category = snapshot.data()[categoryFieldName];
 }
