@@ -11,7 +11,7 @@ class CloudNote {
   final String title;
   final String content;
   final String dateTime;
-  final CloudNoteCategory category;
+  final  category;
 
   const CloudNote({
     required this.noteId,
@@ -29,11 +29,11 @@ class CloudNote {
     title = snapshot.data()[titleFieldName],
     content = snapshot.data()[contentFieldName],
     dateTime = snapshot.data()[dateTimeFieldName],
-    category = snapshot.data()[categoryFieldName] == "School"
-               ? CloudNoteCategory.school
-               : snapshot.data()[categoryFieldName] == "Personal"
-               ? CloudNoteCategory.personal
-               : CloudNoteCategory.work;
-
-
+    category = snapshot.data()[categoryFieldName].isEmpty
+               ? []
+               : snapshot.data()[categoryFieldName].length == 1
+               ? [snapshot.data()[categoryFieldName][0]]
+               : snapshot.data()[categoryFieldName].length == 2
+               ? [snapshot.data()[categoryFieldName][0], snapshot.data()[categoryFieldName][1]]
+               : [snapshot.data()[categoryFieldName][0], snapshot.data()[categoryFieldName][1], snapshot.data()[categoryFieldName][2]];
 }

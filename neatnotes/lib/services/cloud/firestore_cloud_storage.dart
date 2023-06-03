@@ -28,7 +28,7 @@ class FirestoreCloudStorage {
       titleFieldName: '',
       contentFieldName: '',
       dateTimeFieldName: formattedDateTime,
-      categoryFieldName: 'Personal' //Personal category by default
+      categoryFieldName: [],
     });
     //Get reference to the new note added into the notes collection
     final fetchedNote = await document.get();
@@ -39,7 +39,7 @@ class FirestoreCloudStorage {
       title: '',
       content: '',
       dateTime: formattedDateTime,
-      category: CloudNoteCategory.personal,
+      category: const [],
     );
   }
 
@@ -59,14 +59,14 @@ class FirestoreCloudStorage {
     required String updatedTitle,
     required String updatedContent,
     required String updatedDateTime,
-    required String updatedCategory}) async {
+    required List<String> updatedCategories}) async {
       try {
         //Try updating the note in the backend
         await allNotes.doc(noteId).update({
           titleFieldName: updatedTitle,
           contentFieldName: updatedContent,
           dateTimeFieldName: updatedDateTime,
-          categoryFieldName: updatedCategory,
+          categoryFieldName: updatedCategories,
         });
       } catch (e) {
         throw CouldNotUpdateNoteException();
@@ -97,12 +97,12 @@ class FirestoreCloudStorage {
     }
   }
 
-  //Updates an existing note's category
-  Future<void> updateNoteCategory({required String noteId, required String updatedCategory,}) async {
+  //Updates an existing note's categories
+  Future<void> updateNoteCategories({required String noteId, required List<String> updatedCategories,}) async {
     try {
       //Try updating the note in the backend
       await allNotes.doc(noteId).update({
-        categoryFieldName: updatedCategory,
+        categoryFieldName: updatedCategories,
       });
     } catch (e) {
       throw CouldNotUpdateNoteException();

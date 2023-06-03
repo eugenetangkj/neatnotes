@@ -7,11 +7,10 @@ import 'package:neatnotes/extensions/context_get_arguments.dart';
 import 'package:neatnotes/services/auth/auth_service.dart';
 import 'package:neatnotes/services/auth/bloc/auth_bloc.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
-import 'package:neatnotes/services/auth/firebase_auth_provider.dart';
 import 'package:neatnotes/services/cloud/cloud_note.dart';
-import 'package:neatnotes/services/cloud/cloud_note_category.dart';
 import 'package:neatnotes/services/cloud/firestore_cloud_storage.dart';
 import 'package:neatnotes/utilities/dialogs/logout_dialog.dart';
+import 'package:roundcheckbox/roundcheckbox.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
   const CreateUpdateNoteView({ Key ? key}): super(key: key);
@@ -21,6 +20,7 @@ class CreateUpdateNoteView extends StatefulWidget {
 }
 
 class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
+
   //Current note that is created
   CloudNote? _note;
 
@@ -28,13 +28,14 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   late final TextEditingController _titleController;
   late final TextEditingController _contentController;
 
-  //Dropdown menu value
-  String _dropdownValue = 'Personal';
+  //Checkbox values
+  bool shouldCheckPersonal = false;
+  bool shouldCheckSchool = false;
+  bool shouldCheckWork = false;
 
   //Storage to handle the backend
   late final FirestoreCloudStorage _notesService;
 
-  
   @override
   void initState() {
     _notesService = FirestoreCloudStorage();
@@ -43,6 +44,8 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     super.initState();
   }
 
+
+  
   //A listener that listens to changes in note title
   void _titleControllerListener() async {
     //Listens to changes in the title and updates database whenever changes are made
@@ -65,15 +68,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     await _notesService.updateNoteContent(noteId: note.noteId, updatedContent: content);
   }
 
-  //A listener that listens to changes in note category
-  void _categoryControllerListener() async {
-    final note = _note;
-    if (note == null) {
-      return;
-    }
-    final category = _dropdownValue;
-    await _notesService.updateNoteCategory(noteId: note.noteId, updatedCategory: category);
-  }
+ 
 
   //Add listener to title controller
   void _setUpTitleControllerListener() {
@@ -99,11 +94,6 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       //Prepopulate fields with existing note's content
       _titleController.text = currentNote.title;
       _contentController.text = currentNote.content;
-      _dropdownValue = (currentNote.category == CloudNoteCategory.personal)
-                       ? "Personal"
-                       : (currentNote.category == CloudNoteCategory.school)
-                       ? "School"
-                       : "Work";
       return currentNote;
     }
 
@@ -114,22 +104,15 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       //Prevents continous creation of the same note during hot reload
       return existingNote;
     } else {
-      final currentUser = AuthService(FirebaseAuthProvider()).getCurrentUser!;
-      
+      final currentUser = AuthService.createFromFirebase().getCurrentUser!;
       final userId = currentUser.id;
       final newNote = await _notesService.createNewNote(ownerUserId: userId);
       _note = newNote;
       return newNote;
     }
-
-
-
-
-
-
-
-
   }
+  
+
 
   //Checks if note is empty and if so, delete it
   void _deleteNoteIfTextIsEmpty() {
@@ -144,16 +127,27 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     final noteToCheck = _note;
     final title = _titleController.text;
     final content = _contentController.text;
+    final List<String> categories = [];
+
+    if (shouldCheckPersonal) {
+      categories.add("Personal");
+    }
+    if (shouldCheckSchool) {
+      categories.add("School");
+    }
+    if (shouldCheckWork) {
+      categories.add("Work");
+    }
 
 
     if (noteToCheck != null && title.isNotEmpty && content.isNotEmpty) {
       //Case 1: Title and content are not empty
       await _notesService.updateNote(
       noteId: noteToCheck.noteId,
-      updatedTitle: _titleController.text,
+      updatedTitle: title,
       updatedContent: content,
       updatedDateTime: DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now()),
-      updatedCategory: _dropdownValue);
+      updatedCategories: categories);
 
     } else if (noteToCheck != null && title.isEmpty && content.isNotEmpty) {
       //Case 2: Title empty but content not empty
@@ -162,7 +156,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         updatedTitle: "No title",
         updatedContent: content,
         updatedDateTime: DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now()),
-        updatedCategory: _dropdownValue);
+        updatedCategories: categories);
     } else if (noteToCheck != null && title.isNotEmpty && content.isEmpty) {
       //Case 3: Title is not empty but content is empty
       await _notesService.updateNote(
@@ -170,7 +164,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         updatedTitle: title,
         updatedContent: "No content",
         updatedDateTime: DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now()),
-        updatedCategory: _dropdownValue);
+        updatedCategories: categories);
     }
   }
 
@@ -429,98 +423,133 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       ),
     );
   }
+ 
+  //Builds checkbox
+  Widget buildCheckboxes() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
+      child: Column(
+        children: [
+          //Personal
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 100,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                    child: Text(
+                      "Personal",
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      )
+                    ),
+                  ),
+                ),
+          
+                SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: RoundCheckBox(
+                    isChecked: shouldCheckPersonal,
+                    borderColor: lightGrayColour,
+                    checkedColor: darkBlueColour,
+                    onTap: (selected) {
+                      shouldCheckPersonal = ! (shouldCheckPersonal);
+                    } 
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-  //Builds category drop down field
-  Widget buildCategoryDropdownField() {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.6,
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(30, 20, 30, 0),
-          child: DropdownButtonFormField(
-            //Make down arrow to far right and set hint text
-            isExpanded: true,
-            hint: const Text(
-              "Select Category",
-              style: TextStyle(
-                fontFamily: "Roboto",
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
-                color: lightGrayColour,
-              )
+          //School
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 100,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                    child: Text(
+                      "School",
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      )
+                    ),
+                  ),
+                ),
+          
+                SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: RoundCheckBox(
+                    isChecked: shouldCheckSchool,
+                    borderColor: lightGrayColour,
+                    checkedColor: darkBlueColour,
+                    onTap: (selected) {
+                      shouldCheckSchool = ! (shouldCheckSchool);
+                    } 
+                  ),
+                ),
+              ],
             ),
-      
-            //Initial value in dropdown list
-            value: _dropdownValue,
-            
-            //Down arrow icon in dropdown list
-            icon: const Icon(
-              Icons.keyboard_arrow_down,
-              color: lightGrayColour,
-            ),
-      
-            //Set decoration for dropdown list
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  color: Colors.white,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  color: darkBlueColour,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  color: Colors.red,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  color: Colors.red,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              )
-            ),
+          ),
 
-      
-            //Prepopulate dropdown field with list of categories 
-            items: categories.map((category) =>
-              DropdownMenuItem(
-                value: category,
-                child: Text(category),
-              )
-            ).toList(),
-      
-            //Update dropdown value when selection changes
-            onChanged: (String? newValue) {
-              setState(() {
-                _dropdownValue = newValue ?? "";
-                _categoryControllerListener();
-              });
-            },
-          ),   
-        ),
+          //Work
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 100,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                    child: Text(
+                      "Work",
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      )
+                      
+                      ),
+                  ),
+                ),
+          
+                SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: RoundCheckBox(
+                    isChecked: shouldCheckWork,
+                    borderColor: lightGrayColour,
+                    checkedColor: darkBlueColour,
+                    onTap: (selected) {
+                      if (! shouldCheckWork) {
+                        shouldCheckWork = ! (shouldCheckWork);
+                      }
+                    }
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-    );
+    );       
   }
+
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: createOrGetExistingNote(context),
+      future:  createOrGetExistingNote(context),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
@@ -560,7 +589,8 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                         buildContentWidget(),
                         buildContentTextField(),
                         buildCategoryWidget(),
-                        buildCategoryDropdownField(),
+                        // buildCategoryDropdownField(),
+                        buildCheckboxes(),
           
                       ]
                     ),
@@ -571,10 +601,101 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     
           default:
             //New note is still being created. Wait for new note to be created in the database
-
             return const CircularProgressIndicator();
         }
       }
     );
   }
+
 }
+
+
+
+// //Builds category drop down field
+  // Widget buildCategoryDropdownField() {
+  //   return Align(
+  //     alignment: Alignment.topLeft,
+  //     child: SizedBox(
+  //       width: MediaQuery.of(context).size.width * 0.6,
+  //       child: Padding(
+  //         padding: const EdgeInsetsDirectional.fromSTEB(30, 20, 30, 0),
+  //         child: DropdownButtonFormField(
+  //           //Make down arrow to far right and set hint text
+  //           isExpanded: true,
+  //           hint: const Text(
+  //             "Select Category",
+  //             style: TextStyle(
+  //               fontFamily: "Roboto",
+  //               fontWeight: FontWeight.w400,
+  //               fontSize: 16,
+  //               color: lightGrayColour,
+  //             )
+  //           ),
+      
+  //           //Initial value in dropdown list
+  //           value: _dropdownValue,
+            
+  //           //Down arrow icon in dropdown list
+  //           icon: const Icon(
+  //             Icons.keyboard_arrow_down,
+  //             color: lightGrayColour,
+  //           ),
+      
+  //           //Set decoration for dropdown list
+  //           decoration: InputDecoration(
+  //             filled: true,
+  //             fillColor: Colors.white,
+  //             contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+  //             enabledBorder: OutlineInputBorder(
+  //               borderSide: const BorderSide(
+  //                 color: Colors.white,
+  //                 width: 2,
+  //               ),
+  //               borderRadius: BorderRadius.circular(20),
+  //             ),
+  //             focusedBorder: OutlineInputBorder(
+  //               borderSide: const BorderSide(
+  //                 color: darkBlueColour,
+  //                 width: 2,
+  //               ),
+  //               borderRadius: BorderRadius.circular(20),
+  //             ),
+  //             errorBorder: OutlineInputBorder(
+  //               borderSide: const BorderSide(
+  //                 color: Colors.red,
+  //                 width: 2,
+  //               ),
+  //               borderRadius: BorderRadius.circular(20),
+  //             ),
+  //             focusedErrorBorder: OutlineInputBorder(
+  //               borderSide: const BorderSide(
+  //                 color: Colors.red,
+  //                 width: 2,
+  //               ),
+  //               borderRadius: BorderRadius.circular(20),
+  //             )
+  //           ),
+
+      
+  //           //Prepopulate dropdown field with list of categories 
+  //           items: categories.map((category) =>
+  //             DropdownMenuItem(
+  //               value: category,
+  //               child: Text(category),
+  //             )
+  //           ).toList(),
+      
+  //           //Update dropdown value when selection changes
+  //           onChanged: (String? newValue) {
+  //             setState(() {
+  //               _dropdownValue = newValue ?? "";
+  //               _categoryControllerListener();
+
+  //             });
+                
+  //           },
+  //         ),   
+  //       ),
+  //     ),
+  //   );
+  // }

@@ -4,4 +4,4 @@ const ownerUserIdFieldName = 'user_id';
 const titleFieldName = 'title';
 const contentFieldName = 'content';
 const dateTimeFieldName = 'datetime';
-const categoryFieldName = 'category';
+const categoryFieldName = 'categories';
