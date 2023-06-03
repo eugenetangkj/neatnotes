@@ -36,6 +36,14 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   //Storage to handle the backend
   late final FirestoreCloudStorage _notesService;
 
+  //Store initial values to determine if note has changed
+  late final String originalTitle;
+  late final String originalContent;
+  late final List<dynamic> originalCategories;
+  late final String originalDateTime;
+
+
+
   @override
   void initState() {
     _notesService = FirestoreCloudStorage();
@@ -89,6 +97,14 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     if (currentNote != null) {
       //Update existing note
       _note = currentNote;
+
+      //Set original values
+      originalDateTime = currentNote.dateTime;
+      originalTitle = currentNote.title;
+      originalContent = currentNote.content;
+      originalCategories = currentNote.categories;
+
+      
       //Prepopulate fields with existing note's content
       _titleController.text = currentNote.title;
       _contentController.text = currentNote.content;
@@ -96,7 +112,6 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       shouldCheckPersonal = selectedCategories.contains("Personal");
       shouldCheckSchool = selectedCategories.contains("School");
       shouldCheckWork = selectedCategories.contains("Work");
-
 
       return currentNote;
     }
@@ -111,9 +126,18 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       final currentUser = AuthService.createFromFirebase().getCurrentUser!;
       final userId = currentUser.id;
       final newNote = await _notesService.createNewNote(ownerUserId: userId);
+
+      //Set late variables
       shouldCheckPersonal = false;
       shouldCheckSchool = false;
       shouldCheckWork = false;
+      originalTitle = '';
+      originalContent = '';
+      originalCategories = [];
+      originalDateTime =  DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now());
+
+
+
       _note = newNote;
       return newNote;
     }
@@ -146,6 +170,21 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       categories.add("Work");
     }
 
+    //Check if changes are made
+    bool shouldUpdateTime = false;
+    if (title != originalTitle || content != originalContent) {
+      shouldUpdateTime = true;
+    } else if (categories.length != originalCategories.length) {
+      shouldUpdateTime = true;
+    } else {
+      //Reach here means title and content same, and categories same length
+      for (int i = 0; i < categories.length; i = i + 1) {
+        if (! originalCategories.contains(categories[i])) {
+          shouldUpdateTime = true;
+          break;
+        }
+      }
+    }
 
     if (noteToCheck != null && title.isNotEmpty && content.isNotEmpty) {
       //Case 1: Title and content are not empty
@@ -153,7 +192,9 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       noteId: noteToCheck.noteId,
       updatedTitle: title,
       updatedContent: content,
-      updatedDateTime: DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now()),
+      updatedDateTime: (shouldUpdateTime)
+                       ? DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now())
+                       : noteToCheck.dateTime,
       updatedCategories: categories);
 
     } else if (noteToCheck != null && title.isEmpty && content.isNotEmpty) {
@@ -162,24 +203,27 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         noteId: noteToCheck.noteId,
         updatedTitle: "No title",
         updatedContent: content,
-        updatedDateTime: DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now()),
-        updatedCategories: categories);
+        updatedDateTime: (shouldUpdateTime)
+                       ? DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now())
+                       : noteToCheck.dateTime,
+        updatedCategories: categories
+      );
     } else if (noteToCheck != null && title.isNotEmpty && content.isEmpty) {
       //Case 3: Title is not empty but content is empty
       await _notesService.updateNote(
         noteId: noteToCheck.noteId,
         updatedTitle: title,
         updatedContent: "No content",
-        updatedDateTime: DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now()),
+        updatedDateTime: (shouldUpdateTime)
+                       ? DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now())
+                       : noteToCheck.dateTime,
         updatedCategories: categories);
     }
   }
 
 
   @override
-  void dispose() {
-    _deleteNoteIfTextIsEmpty();
-    _saveNoteIfTextNotEmpty();
+  void dispose() async {
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
@@ -198,6 +242,8 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         highlightColor: Colors.transparent,
         onTap: () async {
           //Force keyboard to close
+          _deleteNoteIfTextIsEmpty();
+          _saveNoteIfTextNotEmpty();
           FocusManager.instance.primaryFocus?.unfocus();
           await Future.delayed(const Duration(milliseconds: 200));
           //Navigate to login screen
@@ -254,13 +300,12 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
 
   //Builds date time widget
   Widget buildDateTimeWidget() {
-    String formattedDateTime = DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now());
     return Align(
       alignment: Alignment.center,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
         child: Text(
-          formattedDateTime,
+          originalDateTime,
           style: const TextStyle(
             fontFamily: 'Roboto',
             fontWeight: FontWeight.w400,
@@ -596,7 +641,6 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                         buildContentWidget(),
                         buildContentTextField(),
                         buildCategoryWidget(),
-                        // buildCategoryDropdownField(),
                         buildCheckboxes(),
           
                       ]
