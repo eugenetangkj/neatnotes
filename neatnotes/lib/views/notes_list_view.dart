@@ -83,7 +83,7 @@ class NotesListView extends StatelessWidget {
                       ),
 
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 20, 20, 20),
+                        padding: const EdgeInsets.fromLTRB(0, 30, 20, 0),
                         child: Text(
                           generateCategoriesStrings(note.categories),
                           maxLines: 1,

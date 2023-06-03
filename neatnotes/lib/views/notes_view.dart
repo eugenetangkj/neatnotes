@@ -118,9 +118,11 @@ class _NotesViewState extends State<NotesView> {
             //No longer empty stream. Waiting for new updates
             if (snapshot.hasData) {
               final allNotes = snapshot.data as Iterable<CloudNote>;
+              Iterable<CloudNote> output = sortNotes(allNotes);
+
               //Generates the list of notes
               return NotesListView(
-                notes: allNotes,
+                notes: output,
                 onTap: (note) {
                   //Navigate to edit a specific note
                   Navigator.of(context).pushNamed(
@@ -166,6 +168,36 @@ class _NotesViewState extends State<NotesView> {
     );
 
   }
+
+  //Sorts the list of notes
+  Iterable<CloudNote> sortNotes(Iterable<CloudNote> allNotes) {
+    List<CloudNote> output = allNotes.toList();
+    output.sort((a, b) {
+      String firstDateTimeString = a.dateTime;
+      String secondDateTimeString = b.dateTime;
+
+      DateTime firstDateTime = DateTime.utc(
+        int.parse(firstDateTimeString.substring(0, 4)),
+        int.parse(firstDateTimeString.substring(5, 7)),
+        int.parse(firstDateTimeString.substring(8, 10)),
+        int.parse(firstDateTimeString.substring(11, 13)),
+        int.parse(firstDateTimeString.substring(14,)),
+      );
+
+      DateTime secondDateTime = DateTime.utc(
+        int.parse(secondDateTimeString.substring(0, 4)),
+        int.parse(secondDateTimeString.substring(5, 7)),
+        int.parse(secondDateTimeString.substring(8, 10)),
+        int.parse(secondDateTimeString.substring(11, 13)),
+        int.parse(secondDateTimeString.substring(14,)),
+      );
+
+      return firstDateTime.compareTo(secondDateTime);
+    });
+
+    return output.reversed;
+  }
+
 
 
   @override

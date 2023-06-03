@@ -410,6 +410,12 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(30, 20, 30, 0),
       child: TextFormField(
+        style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+            height: 1.5,
+        ),
         controller: _contentController,
         obscureText: false,
         decoration: InputDecoration(
@@ -622,7 +628,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                       children: [
                         //Top app bar
                         Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                           child:  Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
