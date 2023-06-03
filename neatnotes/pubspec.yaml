@@ -45,6 +45,9 @@ dependencies:
   intl: ^0.18.1
   async: ^2.10.0
   roundcheckbox: ^2.0.5
+  pdf: ^3.10.1
+  open_file_plus: ^3.4.1
+  path_provider: ^2.0.15
 
 dev_dependencies:
   flutter_test:

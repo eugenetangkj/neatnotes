@@ -5,11 +5,14 @@ import 'package:neatnotes/constants/colors.dart';
 import 'package:neatnotes/enums/mynotes_menu_action.dart';
 import 'package:neatnotes/enums/notesview_menu_action.dart';
 import 'package:neatnotes/extensions/context_get_arguments.dart';
+import 'package:neatnotes/helpers/loading/loading_screen.dart';
 import 'package:neatnotes/services/auth/auth_service.dart';
 import 'package:neatnotes/services/auth/bloc/auth_bloc.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
 import 'package:neatnotes/services/cloud/cloud_note.dart';
 import 'package:neatnotes/services/cloud/firestore_cloud_storage.dart';
+import 'package:neatnotes/services/pdf/pdf_api.dart';
+import 'package:neatnotes/services/pdf/pdf_note.dart';
 import 'package:neatnotes/utilities/dialogs/delete_single_note_dialog.dart';
 import 'package:neatnotes/utilities/dialogs/error_dialog.dart';
 import 'package:neatnotes/utilities/dialogs/logout_dialog.dart';
@@ -287,12 +290,23 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                 }
                 break;
               case NotesViewMenuAction.generatePdf:
-                //Ask user for confirmation
-                final shouldLogOut = await showLogoutDialog(context);
-                if (shouldLogOut) {
-                  //User confirms that he wants to log out
-                  context.read<AuthBloc>().add(const AuthEventLogout());
+                if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
+                  showErrorDialog(context, "You must write something in both the note's title and content to generate a PDF.");
+                  return;
                 }
+
+                LoadingScreen().show(context: context, text: "Generating PDF...");
+                PdfNote pdfNote = PdfNote(
+                  noteTitle: _titleController.text,
+                  noteContent: _contentController.text,
+                  personalCategory: shouldCheckPersonal ? "Personal" : "",
+                  schoolCategory: shouldCheckSchool ? "School" : "",
+                  workCategory: shouldCheckWork ? "Work" : "",
+                  noteDateTime: _note?.dateTime.substring(0, 16) ?? 'No date and time'
+                );
+                final pdfFile = await pdfNote.generatePdf();
+                LoadingScreen().hide();
+                PdfApi.openFile(pdfFile);
                 break;
             }
           },
@@ -304,7 +318,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
               ),
               const PopupMenuItem(
                 value: NotesViewMenuAction.generatePdf,
-                child: Text('Generate Pdf')),
+                child: Text('Generate PDF')),
             ];
           }
         ),

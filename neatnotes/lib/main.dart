@@ -76,7 +76,20 @@ class HomePage extends StatelessWidget {
           return const NotesView();
         }
          else {
-          return const Scaffold(body: CircularProgressIndicator());
+          return Scaffold(
+              backgroundColor: lightBlueBackgroundColour,
+              body: Align(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    CircularProgressIndicator(),
+                    Text("Please hold on"),
+                  ],
+                ),
+              )
+            );
         }
 
       });
