@@ -50,7 +50,10 @@ Future<File> generatePdf() async {
 
 
         //Note content
-        Paragraph(text: noteContent),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+          child: Paragraph(text: noteContent),
+        )
 
 
 
@@ -74,7 +77,7 @@ Future<File> generatePdf() async {
       ),
       child: Text(
               headerText,
-              style: const TextStyle(fontSize: 16, color: PdfColors.black),
+              style: const TextStyle(fontSize: 12, color: PdfColors.black),
       ),
     );
   }
@@ -103,7 +106,7 @@ Future<File> generatePdf() async {
         child: Text(
           subheadline,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
             color: PdfColors.black,
           ),

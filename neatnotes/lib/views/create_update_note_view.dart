@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:neatnotes/constants/colors.dart';
-import 'package:neatnotes/enums/mynotes_menu_action.dart';
 import 'package:neatnotes/enums/notesview_menu_action.dart';
 import 'package:neatnotes/extensions/context_get_arguments.dart';
 import 'package:neatnotes/helpers/loading/loading_screen.dart';
 import 'package:neatnotes/services/auth/auth_service.dart';
-import 'package:neatnotes/services/auth/bloc/auth_bloc.dart';
-import 'package:neatnotes/services/auth/bloc/auth_event.dart';
 import 'package:neatnotes/services/cloud/cloud_note.dart';
 import 'package:neatnotes/services/cloud/firestore_cloud_storage.dart';
 import 'package:neatnotes/services/pdf/pdf_api.dart';
 import 'package:neatnotes/services/pdf/pdf_note.dart';
 import 'package:neatnotes/utilities/dialogs/delete_single_note_dialog.dart';
 import 'package:neatnotes/utilities/dialogs/error_dialog.dart';
-import 'package:neatnotes/utilities/dialogs/logout_dialog.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
