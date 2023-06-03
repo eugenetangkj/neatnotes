@@ -29,9 +29,9 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   late final TextEditingController _contentController;
 
   //Checkbox values
-  bool shouldCheckPersonal = false;
-  bool shouldCheckSchool = false;
-  bool shouldCheckWork = false;
+  late bool shouldCheckPersonal;
+  late bool shouldCheckSchool;
+  late bool shouldCheckWork;
 
   //Storage to handle the backend
   late final FirestoreCloudStorage _notesService;
@@ -68,8 +68,6 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     await _notesService.updateNoteContent(noteId: note.noteId, updatedContent: content);
   }
 
- 
-
   //Add listener to title controller
   void _setUpTitleControllerListener() {
     //Whenever the title controller's text changes, it runs the _titleControllerListener function
@@ -94,6 +92,12 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       //Prepopulate fields with existing note's content
       _titleController.text = currentNote.title;
       _contentController.text = currentNote.content;
+      List selectedCategories = currentNote.categories;
+      shouldCheckPersonal = selectedCategories.contains("Personal");
+      shouldCheckSchool = selectedCategories.contains("School");
+      shouldCheckWork = selectedCategories.contains("Work");
+
+
       return currentNote;
     }
 
@@ -107,6 +111,9 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       final currentUser = AuthService.createFromFirebase().getCurrentUser!;
       final userId = currentUser.id;
       final newNote = await _notesService.createNewNote(ownerUserId: userId);
+      shouldCheckPersonal = false;
+      shouldCheckSchool = false;
+      shouldCheckWork = false;
       _note = newNote;
       return newNote;
     }

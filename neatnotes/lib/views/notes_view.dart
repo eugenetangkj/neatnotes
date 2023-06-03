@@ -3,9 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neatnotes/constants/colors.dart';
 import 'package:neatnotes/constants/routes.dart';
 import 'package:neatnotes/enums/mynotes_menu_action.dart';
+import 'package:neatnotes/services/auth/auth_service.dart';
 import 'package:neatnotes/services/auth/bloc/auth_bloc.dart';
 import 'package:neatnotes/services/auth/bloc/auth_event.dart';
+import 'package:neatnotes/services/cloud/cloud_note.dart';
+import 'package:neatnotes/services/cloud/firestore_cloud_storage.dart';
 import 'package:neatnotes/utilities/dialogs/logout_dialog.dart';
+import 'package:neatnotes/views/notes_list_view.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({ Key ? key}): super(key: key);
@@ -15,10 +19,14 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+  //To manage notes from backend
+  late final FirestoreCloudStorage _notesService;
+  //To easily retrieve user id
+  String get getUserId => AuthService.createFromFirebase().getCurrentUser!.id;
   
   @override
   void initState() {
-    // _notesService = FirebaseCloudStorage();
+    _notesService = FirestoreCloudStorage();
     super.initState();
   }
 
@@ -98,6 +106,67 @@ class _NotesViewState extends State<NotesView> {
     );
   }
 
+  //Builds stream that awaits for notes in the database
+  Widget buildStreamOfNotes() {
+    return StreamBuilder(
+      stream: _notesService.getLatestNotes(ownerUserId: getUserId),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            //Implicit fall through
+          case ConnectionState.active:
+            //No longer empty stream. Waiting for new updates
+            if (snapshot.hasData) {
+              final allNotes = snapshot.data as Iterable<CloudNote>;
+              //Generates the list of notes
+              return NotesListView(
+                notes: allNotes,
+                onTap: (note) {
+                  //Navigate to edit a specific note
+                  Navigator.of(context).pushNamed(
+                    createOrUpdateNoteRoute,
+                    arguments: note,
+                  );
+                },
+              );
+            } else {
+              return SizedBox(
+                  height: MediaQuery.of(context).size.height * 2,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: const [
+                        CircularProgressIndicator(),
+                        Text("Please hold on"),
+                      ],
+                    ),
+                  ),
+                );
+        
+            }
+          default:
+            return Scaffold(
+              backgroundColor: lightBlueBackgroundColour,
+              body: Align(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    CircularProgressIndicator(),
+                    Text("Please hold on"),
+                  ],
+                ),
+              )
+            );
+        }
+      }
+    );
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +194,8 @@ class _NotesViewState extends State<NotesView> {
                     ],
                   ),
                 ),
+
+                buildStreamOfNotes(),
 
               ]
             ),

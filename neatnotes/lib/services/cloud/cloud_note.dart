@@ -11,7 +11,7 @@ class CloudNote {
   final String title;
   final String content;
   final String dateTime;
-  final  category;
+  final List<dynamic> categories;
 
   const CloudNote({
     required this.noteId,
@@ -19,7 +19,7 @@ class CloudNote {
     required this.title,
     required this.content,
     required this.dateTime, 
-    required this.category});
+    required this.categories});
 
   
   //Create isntances of cloud notes from a snapshot of the state of the cloud notes database
@@ -29,5 +29,5 @@ class CloudNote {
     title = snapshot.data()[titleFieldName],
     content = snapshot.data()[contentFieldName],
     dateTime = snapshot.data()[dateTimeFieldName],
-    category = snapshot.data()[categoryFieldName];
+    categories = snapshot.data()[categoryFieldName];
 }

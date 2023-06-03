@@ -39,7 +39,7 @@ class FirestoreCloudStorage {
       title: '',
       content: '',
       dateTime: formattedDateTime,
-      category: const [],
+      categories: const [],
     );
   }
 
