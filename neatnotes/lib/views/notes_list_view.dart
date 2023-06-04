@@ -98,77 +98,102 @@ class NotesListViewState extends State<NotesListView> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10)),
                   child: ListTile(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      onTap: () => widget.onTap(note),
-                              
-                      //Note title
-                      title: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                        child: Text(
-                          note.title,
-                          maxLines: 1,
-                          softWrap: true,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 18,
-                          ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    onTap: () => widget.onTap(note),
+                    isThreeLine: true,
+                            
+                    //Note title
+                    title: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: Text(
+                        note.title,
+                        maxLines: 1,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
                         ),
                       ),
-                      
-                      //Note content and categories
-                      subtitle: Padding(
+                    ),
+                    
+                    //Note content and categories
+                    subtitle: Padding(
                         padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             //Note content
-                            Text(
-                              note.content,
-                              maxLines: 1,
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                              ),
-                            ),
-                              
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 30, 20, 0),
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                               child: Text(
-                                generateCategoriesStrings(note.categories),
+                                note.content,
                                 maxLines: 1,
-                                softWrap: true,
+                                                 
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w400,
                                   fontSize: 14,
-                                  color: darkBlueColour,
                                 ),
                               ),
                             ),
-   
+                              
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                //Note categories
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                  child: Text(
+                                    generateCategoriesStrings(note.categories),
+                                    maxLines: 1,
+                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontFamily: 'Roboto',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14,
+                                      color: darkBlueColour,
+                                    ),
+                                  ),
+                                ),
+
+                                //Note date
+                                Text(
+                                  note.dateTime.substring(0, 16),
+                                  maxLines: 1,
+                                  softWrap: true,
+                                  overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14,
+                                    color: darkBlueColour,
+                                  ),
+                                ),
+                              ],
+                            ),
+                      
                           ],
                         ),
                       ),
-                      //Note date
-                      trailing: Text(
-                        note.dateTime.substring(0, 16),
-                        maxLines: 1,
-                        softWrap: true,
-                        overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: darkBlueColour,
-                        ),
-                      ),
-                    ),
+
+                    // //Note date
+                    // trailing: Text(
+                    //   note.dateTime.substring(0, 16),
+                    //   maxLines: 1,
+                    //   softWrap: true,
+                    //   overflow: TextOverflow.ellipsis,
+                    //     style: const TextStyle(
+                    //     fontFamily: 'Roboto',
+                    //     fontWeight: FontWeight.w400,
+                    //     fontSize: 14,
+                    //     color: darkBlueColour,
+                    //   ),
+                    // ),
+                  ),
                 ),
               ),
             );

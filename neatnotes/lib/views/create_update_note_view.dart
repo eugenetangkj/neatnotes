@@ -509,7 +509,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   //Builds checkbox
   Widget buildCheckboxes() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
+      padding: const EdgeInsets.fromLTRB(30, 20, 30, 40),
       child: Column(
         children: [
           //Personal
