@@ -49,6 +49,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       //Initialise the provider
       await provider.initialize();
       final user = provider.getCurrentUser;
+      await Future.delayed(const Duration(seconds: 3));
       if (user == null) {
         //Initialise the auth provider but there is no logged in user. Means logged out state.
         emit(const AuthStateLoggedOut(exception: null, isLoading: false));

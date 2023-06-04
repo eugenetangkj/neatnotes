@@ -14,6 +14,7 @@ import 'package:neatnotes/views/login_view.dart';
 import 'package:neatnotes/views/notes_view.dart';
 import 'package:neatnotes/views/register_view.dart';
 import 'package:neatnotes/views/verify_email_view.dart';
+import 'package:rive/rive.dart';
 
 import 'views/create_update_note_view.dart';
 
@@ -77,19 +78,27 @@ class HomePage extends StatelessWidget {
         }
          else {
           return Scaffold(
-              backgroundColor: lightBlueBackgroundColour,
-              body: Align(
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    CircularProgressIndicator(),
-                    Text("Please hold on"),
-                  ],
-                ),
-              )
-            );
+            backgroundColor: lightBlueBackgroundColour,
+            body: Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  SizedBox(
+                    height: 300,
+                    width: 300,
+                    child: RiveAnimation.asset(
+                      'assets/images/logo_animation.riv',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+
+                  CircularProgressIndicator(),
+                ],
+              ),
+            ),
+          );
         }
 
       });

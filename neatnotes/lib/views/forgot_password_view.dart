@@ -178,7 +178,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w700,
-                fontSize: 18,
+                fontSize: 16,
               )
             ),
         ),

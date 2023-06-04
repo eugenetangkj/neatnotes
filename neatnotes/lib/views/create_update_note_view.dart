@@ -691,7 +691,10 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: const [
                     CircularProgressIndicator(),
-                    Text("Please hold on"),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      child: Text("Please hold on"),
+                    ),
                   ],
                 ),
               )
