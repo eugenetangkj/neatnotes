@@ -1,4 +1,4 @@
-<img src="assets/readme_images/readme-splash.png" width="700" />
+<img src="neatnotes/assets/readme_images/readme-splash.png" width="700" />
 
 # neatnotes
 
