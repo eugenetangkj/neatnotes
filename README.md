@@ -16,10 +16,10 @@ You can run the application on your Android device by running this APK on it.
 ## UI Mockup
 You can view the hi-fidelity prototype for neatnotes at this [Figma link](https://www.figma.com/file/PPykJwYKVNBqVYFTJwzMPw/NeatNotes?type=design&node-id=0%3A1&t=9VcbUMcaPIIuP8sx-1).
 
-## Demo
-Insert videos here
-
 ## Core Features
+
+neatnotes offers the following features:
+
 1. Email and password login
 2. Google account login
 3. Account registration + Email verification
@@ -31,6 +31,19 @@ Insert videos here
 9. Delete all notes
 10. Generate the PDF version of a note
 11. Logout
+
+## Demo
+
+If you are interested, you can view this [video]('#') for a detailed walkthrough of the app's functionalities. Else, feel free to refer to the demo images below.
+
+
+<img src="neatnotes/assets//readme_images/login_gif.gif" width="30%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="neatnotes/assets//readme_images/google_gif.gif" width="30%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="neatnotes/assets//readme_images/edit_gif.gif" width="30%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<div style="margin-top: 30px;">
+
+<img src="neatnotes/assets//readme_images/create_gif.gif" width="30%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="neatnotes/assets//readme_images/pdf_gif.gif" width="30%" margin-top=200>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="neatnotes/assets//readme_images/delete_gif.gif" width="30%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+</div>
 
 
 
