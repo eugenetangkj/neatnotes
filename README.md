@@ -44,7 +44,7 @@ neatnotes offers the following features:
 
 ## Demo
 
-If you are interested, you can view this [video]('https://www.youtube.com/watch?v=PKrr3AFPh2I') for a detailed walkthrough of the app's functionalities. Else, feel free to refer to the demo images below.
+If you are interested, you can view this [video](https://www.youtube.com/watch?v=PKrr3AFPh2I) for a detailed walkthrough of the app's functionalities. Else, feel free to refer to the demo images below.
 
 
 <img src="neatnotes/assets//readme_images/login_gif.gif" width="30%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="neatnotes/assets//readme_images/google_gif.gif" width="30%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="neatnotes/assets//readme_images/edit_gif.gif" width="30%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
