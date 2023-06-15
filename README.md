@@ -74,4 +74,4 @@ neatnotes uses the following packages:
 | [pdf](https://pub.dev/packages/pdf)                         | To create PDF using Flutter widgets, used during PDF conversion of notes                  | `flutter pub add pdf`             |
 | [open_file_plus](https://pub.dev/packages/open_file_plus)   | To utilise the phone's file system for viewing of PDF when a PDF is generated             | `flutter pub add open_file_plus`  |
 | [path_provider](https://pub.dev/packages/path_provider)     | To locate the path on the phone's file system in which the PDF will be stored             | `flutter pub add path_provider`   |
-| [equatable](https://pub.dev/packages/rive)                  | To add the opening animation when the app first loads                                     | `flutter pub add rive`            |
+| [rive](https://pub.dev/packages/rive)                  | To add the opening animation when the app first loads                                     | `flutter pub add rive`            |
