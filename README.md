@@ -10,8 +10,18 @@ For the front-end, it is built using Flutter. For the backend, neatnotes utilise
 This is an application that I built when I first picked up Flutter, and it is adapted from the tutorial provided by [Vandad Nahavandipoor](https://www.youtube.com/watch?v=VPvVD8t02U8). If you are interested in learning Flutter, I would highly recommend Vandad's course, which not only provides a good introduction of Dart and Flutter, but also the intricacies of software development.
 
 ## APK Download
-You can run the application on your Android device by running this APK on it.
+You can run the application on your Android device by downloading the APK file to your phone.
 
+1. Clone the repository to your computer by running the command `git clone https://github.com/eugenetangkj/neatnotes.git`.
+
+2. Change directory to the repository that was cloned in step 1. For example, `cd \neatnotes\neatnotes`.
+
+3. Connect your Android device to your computer with a USB cable.
+
+4. Run `flutter install` in the terminal. This will download the APK file to your device. Note that
+you need to have Flutter installed for this. If you do not have Flutter, you can refer to this [tutorial](https://www.youtube.com/watch?v=VFDbZk2xhO4) to get started.
+
+5. Enjoy tracking notes with neatnotes!
 
 ## UI Mockup
 You can view the hi-fidelity prototype for neatnotes at this [Figma link](https://www.figma.com/file/PPykJwYKVNBqVYFTJwzMPw/NeatNotes?type=design&node-id=0%3A1&t=9VcbUMcaPIIuP8sx-1).
@@ -46,16 +56,22 @@ If you are interested, you can view this [video]('#') for a detailed walkthrough
 </div>
 
 
+## Dependencies
+neatnotes uses the following packages:
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Package                                                     | Purpose                                                                                   | Command                           |
+|-------------------------------------------------------------|-------------------------------------------------------------------------------------------|-----------------------------------|
+| [firebase_core](https://pub.dev/packages/firebase_core)     | To use Firebase Core API and connect with Firebase for email sign in                      | `flutter pub add firebase_core`   |
+| [firebase_auth](https://pub.dev/packages/firebase_auth)     | To use Firebase Authentication API for email sign in                                      | `flutter pub add firebase_auth`   |
+| [cloud_firestore](https://pub.dev/packages/cloud_firestore) | To store notes data on Firebase Cloud Firestore                                           | `flutter pub add cloud_firestore` |
+| [bloc](https://pub.dev/packages/bloc)                       | To use BLoC design pattern for the authentication service                                 | `flutter pub add bloc`            |
+| [flutter_bloc](https://pub.dev/packages/flutter_bloc)       | To use widgets that work with bloc                                                        | `flutter pub add flutter_bloc`    |
+| [equatable](https://pub.dev/packages/equatable)             | To easily override equality comparisons between objects, especially for state comparisons | `flutter pub add equatable`       |
+| [google_sign_in](https://pub.dev/packages/google_sign_in)   | To integrate Google sign in API with the app                                              | `flutter pub add google_sign_in`  |
+| [intl](https://pub.dev/packages/intl)                       | To do date comparisons and conversion between dates and strings                           | `flutter pub add intl`            |
+| [async](https://pub.dev/packages/async)                     | To carry out async operations                                                             | `flutter pub add async`           |
+| [roundcheckbox](https://pub.dev/packages/roundcheckbox)     | To implement customisable checkboxes in the edit/create notes view                        | `flutter pub add roundcheckbox`   |
+| [pdf](https://pub.dev/packages/pdf)                         | To create PDF using Flutter widgets, used during PDF conversion of notes                  | `flutter pub add pdf`             |
+| [open_file_plus](https://pub.dev/packages/open_file_plus)   | To utilise the phone's file system for viewing of PDF when a PDF is generated             | `flutter pub add open_file_plus`  |
+| [path_provider](https://pub.dev/packages/path_provider)     | To locate the path on the phone's file system in which the PDF will be stored             | `flutter pub add path_provider`   |
+| [equatable](https://pub.dev/packages/rive)                  | To add the opening animation when the app first loads                                     | `flutter pub add rive`            |
